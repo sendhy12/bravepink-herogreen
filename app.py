@@ -3,23 +3,21 @@ from PIL import Image, ImageOps
 import numpy as np
 
 # =============================
-# Fungsi untuk efek Brave Pink – Hero Green
+# Fungsi efek dua warna
 # =============================
-def brave_pink_hero_green(img):
-    # Convert ke grayscale
+def brave_pink_hero_green(img, threshold=128):
     gray = ImageOps.grayscale(img)
     arr = np.array(gray)
 
-    # Normalisasi (0 - 1)
-    norm = arr / 255.0
+    # Warna hex → RGB
+    pink = np.array([247, 132, 197])   # #f784c5
+    green = np.array([27, 96, 47])     # #1b602f
 
-    # Warna Brave Pink (magenta) dan Hero Green (neon hijau)
-    pink = np.array([255, 105, 180])   # Hot Pink
-    green = np.array([0, 255, 128])    # Neon Green
-
-    # Linear interpolation: 0 → pink, 1 → green
-    duotone = (1 - norm[..., None]) * pink + norm[..., None] * green
-    duotone = duotone.astype(np.uint8)
+    # Buat mask berdasarkan threshold
+    mask = arr > threshold
+    duotone = np.zeros((*arr.shape, 3), dtype=np.uint8)
+    duotone[mask] = green
+    duotone[~mask] = pink
 
     return Image.fromarray(duotone)
 
@@ -39,8 +37,11 @@ if uploaded_file:
     st.subheader("Foto Asli")
     st.image(img, use_container_width=True)
 
+    # Slider untuk atur threshold
+    threshold = st.slider("Atur intensitas pemisahan warna", 0, 255, 128)
+
     # Proses efek
-    result = brave_pink_hero_green(img)
+    result = brave_pink_hero_green(img, threshold=threshold)
 
     st.subheader("Foto Brave Pink – Hero Green")
     st.image(result, use_container_width=True)
