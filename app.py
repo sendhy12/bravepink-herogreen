@@ -13,9 +13,9 @@ def brave_pink_hero_green(img):
     # Normalisasi (0 - 1)
     norm = arr / 255.0
 
-    # Warna Brave Pink (magenta) dan Hero Green (neon hijau)
-    pink = np.array([255, 105, 180])   # Hot Pink
-    green = np.array([0, 255, 128])    # Neon Green
+    # Warna sesuai hex (#f784c5 dan #1b602f)
+    pink = np.array([247, 132, 197])   # #f784c5
+    green = np.array([27, 96, 47])     # #1b602f
 
     # Linear interpolation: 0 → pink, 1 → green
     duotone = (1 - norm[..., None]) * pink + norm[..., None] * green
