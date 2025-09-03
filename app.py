@@ -45,7 +45,7 @@ if uploaded_file is not None:
     result = Image.fromarray(colored)
 
     # Tampilkan hasil
-    st.image(result, caption="✨ Hasil Filter Solidaritas", use_column_width=True)
+    st.image(result, caption="✨ Hasil Filter Solidaritas", use_container_width=True)
 
     # Simpan ke buffer untuk download
     buf = io.BytesIO()
