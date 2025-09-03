@@ -266,7 +266,7 @@ with col2:
 # =============================
 st.markdown("---")
 st.markdown('''
-<div style="text-align: center; padding: 1rem; color: #666;">
+<div class="footer-section">
     <p>🇮🇩 <strong>Dibuat dengan ❤️ untuk Indonesia</strong></p>
     <p><small>Filter ini dibuat untuk menunjukkan solidaritas dan persatuan bangsa Indonesia</small></p>
 </div>
