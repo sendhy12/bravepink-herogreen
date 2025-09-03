@@ -1,52 +1,34 @@
 import streamlit as st
-from PIL import Image, ImageOps
+from PIL import Image
 import numpy as np
 
-# =============================
-# Fungsi efek dua warna
-# =============================
-def brave_pink_hero_green(img, threshold=128):
-    gray = ImageOps.grayscale(img)
-    arr = np.array(gray)
+st.title("🇮🇩 Solidaritas Indonesia Filter")
+st.write("Ubah fotomu jadi gaya warna hijau & pink sebagai bentuk solidaritas.")
 
-    # Warna hex → RGB
-    pink = np.array([247, 132, 197])   # #f784c5
-    green = np.array([27, 96, 47])     # #1b602f
-
-    # Buat mask berdasarkan threshold
-    mask = arr > threshold
-    duotone = np.zeros((*arr.shape, 3), dtype=np.uint8)
-    duotone[mask] = green
-    duotone[~mask] = pink
-
-    return Image.fromarray(duotone)
-
-# =============================
-# Streamlit UI
-# =============================
-st.set_page_config(page_title="Brave Pink – Hero Green Generator", layout="centered")
-
-st.title("🩷💚 Brave Pink – Hero Green Generator")
-st.write("Ubah fotomu ke gaya solidaritas **Brave Pink – Hero Green** 🇮🇩")
-
-# Upload foto
-uploaded_file = st.file_uploader("Upload foto", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Upload Foto", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
-    img = Image.open(uploaded_file).convert("RGB")
-    st.subheader("Foto Asli")
-    st.image(img, use_container_width=True)
+    img = Image.open(uploaded_file).convert("L")  # ubah grayscale
+    img_array = np.array(img)
 
-    # Slider untuk atur threshold
-    threshold = st.slider("Atur intensitas pemisahan warna", 0, 255, 128)
+    # definisi warna duotone (dari gambar contoh)
+    dark_color = np.array([24, 71, 36])   # hijau gelap
+    light_color = np.array([236, 93, 171]) # pink magenta
 
-    # Proses efek
-    result = brave_pink_hero_green(img, threshold=threshold)
+    # normalisasi pixel grayscale (0-255 -> 0-1)
+    norm = img_array / 255.0
+    # interpolasi linear antara hijau dan pink
+    colored = (dark_color[None, None, :] * (1 - norm[..., None]) +
+               light_color[None, None, :] * norm[..., None]).astype(np.uint8)
 
-    st.subheader("Foto Brave Pink – Hero Green")
-    st.image(result, use_container_width=True)
+    result = Image.fromarray(colored)
 
-    # Tombol download
-    result.save("brave_pink_hero_green.png")
-    with open("brave_pink_hero_green.png", "rb") as f:
-        st.download_button("⬇️ Download Hasil", f, file_name="brave_pink_hero_green.png", mime="image/png")
+    st.image(result, caption="Hasil Filter Solidaritas", use_column_width=True)
+
+    # tombol download
+    st.download_button(
+        "Download Foto",
+        data=result.tobytes(),
+        file_name="solidaritas.png",
+        mime="image/png"
+    )
